@@ -1,4 +1,4 @@
-name: FastAPI ML Tests
+name: FastAPI ML CI
 
 on:
   push:
@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -28,10 +29,17 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-asyncio httpx flake8
 
-      - name: Lint
+      - name: Show test files (debug)
+        run: |
+          echo "Repo tree:"
+          ls -R
+          echo "Tests found:"
+          find . -name "test_*.py"
+
+      - name: Lint (syntax only)
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
-      - name: Run tests
+      - name: Run pytest
         run: |
           pytest -v
